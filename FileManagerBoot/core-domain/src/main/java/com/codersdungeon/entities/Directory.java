@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,7 @@ public class Directory extends FileItem{
     @OneToMany
     private List<FileItem> fileItemList = new ArrayList<>();
 
-    public Directory(String name, Long dimension, Directory directory, Date creationDate, Type type, User owner, List<FileItem> fileItemList) {
+    public Directory(String name, Long dimension, Directory directory, Instant creationDate, Type type, User owner, List<FileItem> fileItemList) {
         super(name, dimension, directory, creationDate, type, owner);
         this.fileItemList = fileItemList;
         this.setType(Type.FOLDER);

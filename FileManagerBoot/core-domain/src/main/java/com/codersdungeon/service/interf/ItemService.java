@@ -17,5 +17,5 @@ public interface ItemService {
 
     void deleteItem(DirectoryDTO directory, FileItemDTO filename);
 
-    ListFileItemDTO backup(DirectoryDTO destination);
+    ListFileItemDTO backup(DirectoryDTO directory, DirectoryDTO destination);
 }

@@ -3,6 +3,7 @@ package com.codersdungeon.entities;
 import com.codersdungeon.dto.Type;
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -19,7 +20,7 @@ public class FileItem {
     private Directory directory;
 
     @Column (nullable = false)
-    private Date creationDate;
+    private Instant creationDate;
 
     @Column (nullable = false)
     private Type type = Type.FILE;
@@ -28,7 +29,7 @@ public class FileItem {
     @JoinColumn (name = "username")
     private User owner;
 
-    public FileItem(String name, Long dimension, Directory directory, Date creationDate, Type type, User owner) {
+    public FileItem(String name, Long dimension, Directory directory, Instant creationDate, Type type, User owner) {
         this.name = name;
         this.dimension = dimension;
         this.directory = directory;
@@ -64,11 +65,11 @@ public class FileItem {
         this.directory = directory;
     }
 
-    public Date getCreationDate() {
+    public Instant getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(Instant creationDate) {
         this.creationDate = creationDate;
     }
 

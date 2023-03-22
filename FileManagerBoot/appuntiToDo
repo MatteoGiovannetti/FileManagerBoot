@@ -1,0 +1,25 @@
+17/03
+
+Pensare al db
+Iniziare a pensare db per scrivere i dati sui file (repository, entity, campi presenti etc);
+
+Sul controller, che dovrebbe già interagire. Si può fare RestController con Spring Boot e Spring Web.
+Il controller chiamerà il service.
+
+Iniziare a unire i vari pezzi: linea di comando chiama il service, chiama repository, che chiama il service
+
+ListaFile è una get sul controller, perché visualizzo. Per salvarle bisogna fare un'altra funzione in POST
+sul controller: questa farà elenco di file e prese le informazioni le memorizza nel db. Questo serve per sapere
+quanti file ci sono (se oggi aggiungo/cancello, so quanti e quali sono stati aggiunti o rimossi).
+E' un censimento dei file, come a una fotografia: pensare a un nome.
+
+ListaFile adesso funziona su una cartella, quella che abbiamo impostato di partenza. Se abbiamo un'altra cartella
+non ci dice se c'è un'altra cartella. Iniziare a ragionare su subdir: se voglio salvare i file di una cartella.
+Ricorsione o altri metodi.
+
+1) DB
+FileItem, PK varchar name, varchar dimension, varchar directory FK directory_name, datetime creationDate, varchar owner FK user_id (web)
+Directory, PK varchar name, varchar dimension
+User, PK varchar username, varchar email, varchar pw
+
+2)

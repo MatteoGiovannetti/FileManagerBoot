@@ -1,6 +1,7 @@
 package com.codersdungeon.dto;
 import com.codersdungeon.entities.User;
 
+import java.time.Instant;
 import java.util.Date;
 
 public class FileItemDTO {
@@ -10,6 +11,6 @@ public class FileItemDTO {
     public Enum type;
     public Long dimension;
     public DirectoryDTO directory;
-    public Date creationDate;
+    public Instant creationDate;
     public User owner;
 }

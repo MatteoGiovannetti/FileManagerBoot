@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.Date;
 
 @RestController
@@ -33,7 +34,7 @@ public class ItemController implements AppInterface {
 
     @Override
     @GetMapping(("/items/{percorso}"))
-    public ListFileItemDTO findFilesInDirectory(@PathVariable("percorso") String percorso ) {
+    public ListFileItemDTO findFilesInDirectory(@PathVariable("percorso") String percorso) {
          return utenteService.findAllFiles(percorso);
     }
 
@@ -64,17 +65,19 @@ public class ItemController implements AppInterface {
     }
 
     @Override
-    @PostMapping("backup/{destination}")
-    public ListFileItemDTO backup(@PathVariable("destination") String destination) {
-        DirectoryDTO directoryDTO =utenteService.findDirectory(destination);
-        return utenteService.backup(directoryDTO);
+    @PostMapping("{directory}/backup/{destination}")
+    public ListFileItemDTO backup(@PathVariable ("directory") String directory,
+                                  @PathVariable("destination") String destination) {
+        DirectoryDTO directoryDTO = utenteService.findDirectory(directory);
+        DirectoryDTO destinationDTO =utenteService.findDirectory(destination);
+        return utenteService.backup(directoryDTO, destinationDTO);
     }
 
     @PostMapping("create/file")
     public FileItemDTO saveFile(@PathVariable("name") String name,
                        @PathVariable("dimension") Long dimension,
                        @PathVariable("directory")Directory directory,
-                       @PathVariable("creationDate") Date creationDate,
+                       @PathVariable("creationDate") Instant creationDate,
                        @PathVariable("type") Type type,
                        @PathVariable("owner")User owner
                        ){
@@ -85,7 +88,7 @@ public class ItemController implements AppInterface {
     public DirectoryDTO saveDirectory(@PathVariable("name") String name,
                            @PathVariable("dimension") Long dimension,
                            @PathVariable("directory")Directory directory,
-                           @PathVariable("creationDate") Date creationDate,
+                           @PathVariable("creationDate") Instant creationDate,
                            @PathVariable("type") Type type,
                            @PathVariable("owner")User owner,
                            @PathVariable("items")ListFileItem listFileItem
