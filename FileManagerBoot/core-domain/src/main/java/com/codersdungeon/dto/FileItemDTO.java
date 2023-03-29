@@ -6,11 +6,15 @@ import java.util.Date;
 
 public class FileItemDTO {
 
+    public Integer id;
+
     public String name;
 
-    public Enum type;
     public Long dimension;
     public DirectoryDTO directory;
     public Instant creationDate;
-    public User owner;
+    public FileType type;
+    public String owner;
+
+
 }

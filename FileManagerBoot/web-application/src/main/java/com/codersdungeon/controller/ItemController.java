@@ -1,31 +1,26 @@
-package codersdungeon.controller;
+package com.codersdungeon.controller;
 
 import com.codersdungeon.abstraction.AppInterface;
 import com.codersdungeon.dto.DirectoryDTO;
 import com.codersdungeon.dto.FileItemDTO;
 import com.codersdungeon.dto.ListFileItemDTO;
-import com.codersdungeon.dto.Type;
+import com.codersdungeon.dto.FileType;
 import com.codersdungeon.entities.Directory;
 import com.codersdungeon.entities.ListFileItem;
 import com.codersdungeon.entities.User;
-import com.codersdungeon.repositories.ItemRepository;
-import com.codersdungeon.service.impl.ItemServiceImpl;
+
+import com.codersdungeon.service.interf.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
-import java.util.Date;
 
 @RestController
 @RequestMapping("/file-manager")
 public class ItemController implements AppInterface {
 
     @Autowired
-    ItemRepository itemRepository;
-
-    @Autowired
-    ItemServiceImpl utenteService;
+    ItemService utenteService;
 
    /* @GetMapping ("/items/{percorso}")
     public ListFileItemDTO findAll(@PathVariable("percorso") String percorso) {
@@ -39,33 +34,34 @@ public class ItemController implements AppInterface {
     }
 
     @Override
-    @GetMapping("items/sub/{percorso}")
+    @GetMapping("/items/sub/{percorso}")
     public ListFileItemDTO findFilesSubDir(@PathVariable("percorso") String percorso ) {
         return utenteService.findAllSubDir(percorso);
     }
 
     @Override
-    @PostMapping("item/copy/{directory}/{filename}/{destination}")
+    @PostMapping("/item/copy/{directory}/{filename}/{destination}")
     public FileItemDTO copyItem(@PathVariable("filename") String filename,
                                 @PathVariable("directory") String directory,
                                 @PathVariable("destination") String destination) {
-        FileItemDTO fileItemDTO = utenteService.findFile(filename);
-        DirectoryDTO directoryDTO =utenteService.findDirectory(directory);
+        FileItemDTO fileItemDTO = utenteService.findFile(filename, directory);
         DirectoryDTO destDTO = utenteService.findDirectory(destination);
-        return utenteService.copyItem(fileItemDTO, directoryDTO, destDTO);
+        return utenteService.copyItem(fileItemDTO, fileItemDTO.directory, destDTO);
     }
 
     @Override
-    @DeleteMapping("item/delete/{directory}/{filename}")
+    @DeleteMapping("/item/delete/{directory}/{filename}")
     public void deleteItem(@PathVariable("directory") String directory,
                            @PathVariable("filename") String filename) {
-        FileItemDTO fileItemDTO = utenteService.findFile(filename);
-        DirectoryDTO directoryDTO =utenteService.findDirectory(directory);
-        utenteService.deleteItem(directoryDTO, fileItemDTO);
-    }
+        FileItemDTO fileItemDTO = utenteService.findFile(filename, directory);
+        utenteService.deleteItem(fileItemDTO.directory, fileItemDTO);
+    } //TODO controllare
+
+    //TODO cane da pisciare
+    //FIXME errori da correere
 
     @Override
-    @PostMapping("{directory}/backup/{destination}")
+    @PostMapping("/{directory}/backup/{destination}")
     public ListFileItemDTO backup(@PathVariable ("directory") String directory,
                                   @PathVariable("destination") String destination) {
         DirectoryDTO directoryDTO = utenteService.findDirectory(directory);
@@ -73,27 +69,24 @@ public class ItemController implements AppInterface {
         return utenteService.backup(directoryDTO, destinationDTO);
     }
 
-    @PostMapping("create/file")
-    public FileItemDTO saveFile(@PathVariable("name") String name,
-                       @PathVariable("dimension") Long dimension,
-                       @PathVariable("directory")Directory directory,
-                       @PathVariable("creationDate") Instant creationDate,
-                       @PathVariable("type") Type type,
-                       @PathVariable("owner")User owner
+    @PostMapping("/create/file")
+
+    public FileItemDTO saveFile(@RequestBody FileItemDTO dto
                        ){
-        return utenteService.createFile(name, dimension, directory, creationDate, type, owner);
+        return utenteService.createFile(dto.name, dto.dimension, null, Instant.now(),
+                dto.type, dto.owner);
     }
 
-    @PostMapping("create/directory")
+    @PostMapping("/create/directory")
     public DirectoryDTO saveDirectory(@PathVariable("name") String name,
                            @PathVariable("dimension") Long dimension,
                            @PathVariable("directory")Directory directory,
                            @PathVariable("creationDate") Instant creationDate,
-                           @PathVariable("type") Type type,
+                           @PathVariable("type") FileType fileType,
                            @PathVariable("owner")User owner,
                            @PathVariable("items")ListFileItem listFileItem
                            ){
-        return utenteService.createDir(name,dimension, directory, creationDate, type, owner, listFileItem.getItems());
+        return utenteService.createDir(name,dimension, directory, creationDate, fileType, owner, listFileItem.getItems());
     }
 
 

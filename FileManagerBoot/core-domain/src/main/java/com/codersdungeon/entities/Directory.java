@@ -1,26 +1,23 @@
 package com.codersdungeon.entities;
 
-import com.codersdungeon.dto.Type;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import com.codersdungeon.dto.FileType;
 
-import java.io.File;
+
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 
-@Entity
+
 public class Directory extends FileItem{
 
-    @OneToMany
+
     private List<FileItem> fileItemList = new ArrayList<>();
 
-    public Directory(String name, Long dimension, Directory directory, Instant creationDate, Type type, User owner, List<FileItem> fileItemList) {
-        super(name, dimension, directory, creationDate, type, owner);
+    public Directory(String name, Long dimension, Directory directory, Instant creationDate, FileType fileType, User owner, List<FileItem> fileItemList) {
+        super(name, dimension, directory, creationDate, fileType, owner);
         this.fileItemList = fileItemList;
-        this.setType(Type.FOLDER);
+        this.setFileType(FileType.FOLDER);
     }
 
     public Directory(List<FileItem> fileItemList) {

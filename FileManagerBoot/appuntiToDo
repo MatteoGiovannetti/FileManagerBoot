@@ -22,4 +22,18 @@ FileItem, PK varchar name, varchar dimension, varchar directory FK directory_nam
 Directory, PK varchar name, varchar dimension
 User, PK varchar username, varchar email, varchar pw
 
-2)
+
+
+
+
+
+27/03/2023
+
+Metodo1: chiave numerica (autogenerata) che consente di ricostruire il percorso (quindi anche in caso di
+doppioni, non c'è problema perché la chiave è univoca
+Se salviamo il path in ciascun file, possiamo da
+
+Metodo2: salvare tutto il path come chiave, ma potrebbe esserci il problema della lunghezza del percorso
+
+28/03/2023
+Mettere mapper per cambiare entityToDTO

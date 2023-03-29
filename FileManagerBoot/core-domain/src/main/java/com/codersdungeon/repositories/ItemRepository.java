@@ -9,16 +9,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+
 @Repository
 public interface ItemRepository extends JpaRepository<FileItem, String> {
 
-    @Query ("SELECT i FROM FileItem i WHERE i.name= :filename AND i.type = 'FILE'")
+    @Query ("SELECT i FROM FileItem i WHERE i.filename= :filename AND i.fileType = 'FILE'")
     FileItem findFileByName(@Param("filename") String filename);
 
-    @Query ("SELECT d FROM FileItem d WHERE d.name = :dirName AND d.type = 'FOLDER'" )
+    @Query ("SELECT d FROM FileItem d WHERE d.filename = :dirName AND d.fileType = 'FOLDER'" )
     Directory findDirByName(@Param("dirName") String dirName);
 
-    @Query ("SELECT i FROM FileItem i WHERE i.name= :filename AND i.directory= :dir AND i.type = 'FILE'")
-    FileItem findFileByNameAndFolder(@Param("filename") String filename, @Param("directory") String dir);
+    @Query ("SELECT i FROM FileItem i WHERE i.filename= :filename AND i.fileType = 'FILE'")
+    FileItem findFileByNameAndFolder(@Param("filename") String filename);
 
 }

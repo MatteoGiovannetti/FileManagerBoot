@@ -1,69 +1,80 @@
 package com.codersdungeon.entities;
 
-import com.codersdungeon.dto.Type;
-import jakarta.persistence.*;
+import com.codersdungeon.dto.FileType;
 
+import jakarta.persistence.*;
 import java.time.Instant;
-import java.util.Date;
 
 @Entity
 public class FileItem {
 
     @Id
-    private String name;
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column (nullable = false)
-    private Long dimension;
+    private String filename;
 
-    @ManyToOne
-    @JoinColumn(name="directory_name", nullable = false)
-    private Directory directory;
+    @Column(nullable = false)
+    private Long fileSize;
+
+  /*  @ManyToOne
+    @JoinColumn(name="name")
+    private Directory directory;*/
 
     @Column (nullable = false)
     private Instant creationDate;
 
     @Column (nullable = false)
-    private Type type = Type.FILE;
+    private FileType fileType = FileType.FILE;
 
     @ManyToOne
-    @JoinColumn (name = "username")
-    private User owner;
+   // @JoinColumn (name = "username")
+    private User fileOwner;
 
-    public FileItem(String name, Long dimension, Directory directory, Instant creationDate, Type type, User owner) {
-        this.name = name;
-        this.dimension = dimension;
-        this.directory = directory;
+    public FileItem(String filename, Long fileSize, Directory directory, Instant creationDate, FileType fileType, User fileOwner) {
+        this.filename = filename;
+        this.fileSize = fileSize;
+       // this.directory = directory;
         this.creationDate = creationDate;
-        this.type = type;
-        this.owner = owner;
+        this.fileType = fileType;
+        this.fileOwner = fileOwner;
     }
 
     public FileItem() {
     }
 
-    public String getName() {
-        return name;
+    public Integer getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public Long getDimension() {
-        return dimension;
+    public String getFilename() {
+        return filename;
     }
 
-    public void setDimension(Long dimension) {
-        this.dimension = dimension;
+    public void setFilename(String name) {
+        this.filename = name;
     }
 
-    public Directory getDirectory() {
+    public Long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Long dimension) {
+        this.fileSize = dimension;
+    }
+
+   /* public Directory getDirectory() {
         return directory;
     }
 
     public void setDirectory(Directory directory) {
         this.directory = directory;
-    }
+    }*/
 
     public Instant getCreationDate() {
         return creationDate;
@@ -73,19 +84,19 @@ public class FileItem {
         this.creationDate = creationDate;
     }
 
-    public Type getType() {
-        return type;
+    public FileType getFileType() {
+        return fileType;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setFileType(FileType fileType) {
+        this.fileType = fileType;
     }
 
-    public User getOwner() {
-        return owner;
+    public User getFileOwner() {
+        return fileOwner;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setFileOwner(User owner) {
+        this.fileOwner = owner;
     }
 }

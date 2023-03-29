@@ -3,38 +3,38 @@ package com.codersdungeon.service.impl;
 import com.codersdungeon.dto.DirectoryDTO;
 import com.codersdungeon.dto.FileItemDTO;
 import com.codersdungeon.dto.ListFileItemDTO;
-import com.codersdungeon.dto.Type;
+import com.codersdungeon.dto.FileType;
 import com.codersdungeon.entities.Directory;
 import com.codersdungeon.entities.FileItem;
-import com.codersdungeon.entities.ListFileItem;
 import com.codersdungeon.entities.User;
 import com.codersdungeon.exceptions.EmptyPathException;
-import com.codersdungeon.exceptions.FileNotFoundException;
 import com.codersdungeon.exceptions.PathNotFoundException;
 import com.codersdungeon.exceptions.PercorsoNullException;
 import com.codersdungeon.repositories.ItemRepository;
+import com.codersdungeon.repositories.UserRepository;
 import com.codersdungeon.service.interf.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.codersdungeon.dto.Type.FILE;
-import static com.codersdungeon.dto.Type.FOLDER;
+import static com.codersdungeon.dto.FileType.FILE;
+import static com.codersdungeon.dto.FileType.FOLDER;
 
 @Service
 public class ItemServiceImpl implements ItemService {
 
     @Autowired
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public ListFileItemDTO findAllFiles(String percorso) {
@@ -65,8 +65,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public FileItemDTO findFile(String fileItem){
-            FileItemDTO dto = fileToDTO(itemRepository.findFileByName(fileItem));
+    public FileItemDTO findFile(String fileItem, String directory){
+            FileItemDTO dto = fileToDTO(itemRepository.findFileByNameAndFolder(fileItem));
             return dto;
     }
 
@@ -77,7 +77,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ListFileItemDTO findAllSubDir(String percorso) {
+    public ListFileItemDTO findAllSubDir(String percorso) // qui tentativo di ricorsione
+    {
 
         if(percorso==null){
             throw new PercorsoNullException("Percorso non valido");
@@ -112,15 +113,16 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public FileItemDTO copyItem(FileItemDTO filename, DirectoryDTO directory, DirectoryDTO destination) {
-        FileItem base = itemRepository.findFileByNameAndFolder(filename.name, directory.name);
-        FileItem copy = new FileItem(base.getName(), base.getDimension(), base.getDirectory(), Instant.now(), base.getType(), base.getOwner());
+        FileItem base = itemRepository.findFileByNameAndFolder(filename.name);
+        FileItem copy = new FileItem(base.getFilename(), base.getFileSize(), null,
+                Instant.now(), base.getFileType(), base.getFileOwner());
         itemRepository.save(copy);
         return fileToDTO(copy);
     }
 
     @Override
     public void deleteItem(DirectoryDTO directory, FileItemDTO filename) {
-        FileItem item = itemRepository.findFileByNameAndFolder(filename.name, directory.name);
+        FileItem item = itemRepository.findFileByNameAndFolder(filename.name);
         itemRepository.delete(item);
     }
 
@@ -132,13 +134,19 @@ public class ItemServiceImpl implements ItemService {
         return destDTO.fileItemDTOS;
     }
 
-    public FileItemDTO createFile(String name, Long dimension, Directory dir, Instant creationDate, Type type, User owner){
-        FileItem item = new FileItem(name, dimension,dir,creationDate, type, owner);
+    @Override
+    public FileItemDTO createFile(String name, Long dimension, Directory dir, Instant creationDate,
+                                  FileType fileType,
+                                  String owner){
+        User user = userRepository.findById(owner).orElse(null);
+        FileItem item = new FileItem(name, dimension,dir,creationDate, fileType, user);
         return fileToDTO(itemRepository.save(item));
     }
 
-    public DirectoryDTO createDir(String name, Long dimension, Directory dir, Instant creationDate, Type type, User owner, List<FileItem> items) {
-        Directory directory = new Directory(name, dimension, dir, creationDate, type, owner, items);
+    @Override
+    public DirectoryDTO createDir(String name, Long dimension, Directory dir, Instant creationDate, FileType fileType,
+                                  User owner, List<FileItem> items) {
+        Directory directory = new Directory(name, dimension, dir, creationDate, fileType, owner, items);
         return dirToDTO(itemRepository.save(directory));
     }
 
@@ -160,23 +168,23 @@ public class ItemServiceImpl implements ItemService {
 
     private FileItemDTO fileToDTO (FileItem item) {
         FileItemDTO fileItemDTO = new FileItemDTO();
-        fileItemDTO.name = item.getName();
-        fileItemDTO.dimension = item.getDimension();
-        fileItemDTO.directory = dirToDTO(item.getDirectory());
+        fileItemDTO.name = item.getFilename();
+        fileItemDTO.dimension = item.getFileSize();
+       // fileItemDTO.directory = dirToDTO(null);
         fileItemDTO.creationDate = item.getCreationDate();
-        fileItemDTO.type = item.getType();
-        fileItemDTO.owner = item.getOwner();
+        fileItemDTO.type = item.getFileType();
+        fileItemDTO.owner = item.getFileOwner().getUsername();
         return fileItemDTO;
     }
 
     private DirectoryDTO dirToDTO(FileItem dir) {
         DirectoryDTO dirItemDTO = new DirectoryDTO();
-        dirItemDTO.name = dir.getName();
-        dirItemDTO.dimension = dir.getDimension();
-        dirItemDTO.directory = dirToDTO(dir.getDirectory());
+        dirItemDTO.name = dir.getFilename();
+        dirItemDTO.dimension = dir.getFileSize();
+        dirItemDTO.directory = dirToDTO(null);
         dirItemDTO.creationDate = dir.getCreationDate();
-        dirItemDTO.type = dir.getType();
-        dirItemDTO.owner = dir.getOwner();
+        dirItemDTO.type = dir.getFileType();
+        dirItemDTO.owner = dir.getFileOwner();
         return dirItemDTO;
     }
 }

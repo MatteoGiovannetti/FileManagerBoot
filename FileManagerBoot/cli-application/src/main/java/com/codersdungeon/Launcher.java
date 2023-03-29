@@ -1,15 +1,17 @@
-package codersdungeon;
+package com.codersdungeon;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 
+@SpringBootApplication
 public class Launcher {
 
     public static void main(String[] args){
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.scan("com.codersdungeon"); //spring cerca da quel package a tutto quello che c'è dentro.
+        context.scan("com/codersdungeon"); //spring cerca da quel package a tutto quello che c'è dentro.
         context.refresh();
         //alternativa è
        // context.registerBean("service" etc etc);

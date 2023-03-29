@@ -1,6 +1,6 @@
 package com.codersdungeon.dto;
 
-public enum Type {
+public enum FileType {
 
     FILE, FOLDER;
 }
